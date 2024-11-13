@@ -1,6 +1,6 @@
 <?php
 // Inclusie van db.php voor de databaseverbinding
-//include 'db.php';
+// include 'db.php';
 
 // Verwerk het formulier als het is ingediend
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -8,14 +8,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dag = $_POST['dag'];
     $tijd = $_POST['tijd'];
     $verdieping = $_POST['verdieping'];
+    $locatie = $_POST['locatie'];  // Locatie ophalen
     $naam = $_POST['naam'];
     $email = $_POST['email'];
 
     // Invoegen van gegevens in de database
     try {
         // Maak de SQL-insert-query
-        $sql = "INSERT INTO reserveringen (dag, tijd, verdieping, naam, email) 
-                VALUES (:dag, :tijd, :verdieping, :naam, :email)";
+        $sql = "INSERT INTO reserveringen (dag, tijd, verdieping, locatie, naam, email) 
+                VALUES (:dag, :tijd, :verdieping, :locatie, :naam, :email)";
         
         // Bereid de query voor
         $stmt = $conn->prepare($sql);
@@ -24,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':dag', $dag);
         $stmt->bindParam(':tijd', $tijd);
         $stmt->bindParam(':verdieping', $verdieping);
+        $stmt->bindParam(':locatie', $locatie);  // Locatie binden
         $stmt->bindParam(':naam', $naam);
         $stmt->bindParam(':email', $email);
 
@@ -35,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p>Dag: $dag</p>
                 <p>Tijd: $tijd</p>
                 <p>Verdieping: $verdieping</p>
+                <p>Locatie: $locatie</p>  <!-- Locatie tonen -->
                 <p>Naam: $naam</p>
                 <p>Email: $email</p>
                 <p>Uw reservering is succesvol opgeslagen!</p>
@@ -80,11 +83,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="tijd">Selecteer een Tijd (24-uur formaat):</label>
             <input type="time" id="tijd" name="tijd" required><br><br>
 
-            <label for="verdieping">Selecteer Verdiening:</label>
-            <select id="verdieping" name="verdieping" required>
-                <option value="verdieping1">Verdieping 1</option>
-                <option value="verdieping2">Verdieping 2</option>
-            </select><br><br>
+            <div class="select-container">
+                <div class="select-field">
+                    <label for="verdieping">Selecteer Verdiening:</label>
+                    <select id="verdieping" name="verdieping" required>
+                        <option value="verdieping1">Verdieping 1</option>
+                        <option value="verdieping2">Verdieping 2</option>
+                    </select>
+                </div>
+
+                <div class="select-field">
+                    <label for="locatie">Selecteer Locatie:</label>
+                    <select id="locatie" name="locatie" required>
+                        <option value="locatieA">Locatie Eindhoven</option>
+                        <option value="locatieB">Locatie Tilburg</option>
+                        <option value="locatieC">Locatie Amsterdam</option>
+                    </select>
+                </div>
+            </div>
 
             <label for="naam">Naam:</label>
             <input type="text" id="naam" name="naam" required><br><br>

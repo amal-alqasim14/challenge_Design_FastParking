@@ -37,7 +37,7 @@ header nav ul li a {
     text-decoration: none;
 }
 
-/* Card voor het reserveringsformulier */
+
 .card {
     background-color: white;
     padding: 20px;
@@ -57,12 +57,12 @@ form {
 }
 
 form label {
-    margin: 5px 0;
+    margin: 5px;
 }
 
 form input, form select, form button {
     padding: 10px;
-    margin: 10px 0;
+    margin: 10px -10px;
     font-size: 1em;
     width: 100%;
     border: 1px solid #ddd;
@@ -79,6 +79,18 @@ form button:hover {
     background-color: #555;
 }
 
+
+.select-container {
+    display: flex;
+    gap: 20px; /* Ruimte tussen de velden */
+    flex-wrap: wrap; 
+}
+
+.select-field {
+    flex: 1; 
+    min-width: 200px; 
+}
+
 /* Footer */
 footer {
     background-color: #333;
@@ -88,4 +100,15 @@ footer {
     /* position: fixed; */
     bottom: 0;
     width: 100%;
+}
+
+/* Zorg ervoor dat de velden onder elkaar komen op kleinere schermen */
+@media (max-width: 768px) {
+    .select-container {
+        flex-direction: column; 
+    }
+
+    .select-field {
+        flex: none; 
+    }
 }
