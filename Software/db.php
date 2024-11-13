@@ -1,17 +1,18 @@
 <?php
-// Database configuratie
-$servername = "localhost";  // Database host
-$username = "root";         // Database gebruiker
-$password = "";             // Database wachtwoord
-$dbname = "parkeren";       // Database naam
 
-// Maak verbinding met de database
+// Configuratie-instellingen
+$servername = getenv('DB_HOST') ?: 'localhost';
+$username = getenv('DB_USERNAME') ?: 'mqtt_user';
+$password = getenv('DB_PASSWORD') ?: 'Welkom123!';
+$dbname = getenv('DB_NAME') ?: 'mqtt_data';
+
 try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // Stel de PDO-foutmodus in
+    // Maak verbinding met de database via PDO
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // echo "Verbonden met de database!";
 } catch(PDOException $e) {
-    echo "Verbinding mislukt: " . $e->getMessage();
+    echo "Verbinding met de database mislukt.";
+    error_log("Databasefout: " . $e->getMessage());
+    exit();
 }
 ?>

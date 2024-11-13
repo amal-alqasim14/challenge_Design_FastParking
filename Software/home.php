@@ -1,6 +1,7 @@
 <?php
-// Inclusie van db.php voor de databaseverbinding
-// include 'db.php';
+// Inclusie van db.php en mqtt.php voor database- en MQTT-verbindingen
+ include 'db.php';
+// include 'mqtt.php';
 
 // Verwerk het formulier als het is ingediend
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -8,42 +9,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dag = $_POST['dag'];
     $tijd = $_POST['tijd'];
     $verdieping = $_POST['verdieping'];
-    $locatie = $_POST['locatie'];  // Locatie ophalen
+    $locatie = $_POST['locatie'];
     $naam = $_POST['naam'];
     $email = $_POST['email'];
 
-    // Invoegen van gegevens in de database
     try {
-        // Maak de SQL-insert-query
+        // SQL-insert-query
         $sql = "INSERT INTO reserveringen (dag, tijd, verdieping, locatie, naam, email) 
                 VALUES (:dag, :tijd, :verdieping, :locatie, :naam, :email)";
         
-        // Bereid de query voor
         $stmt = $conn->prepare($sql);
-
-        // Bind de waarden aan de query
         $stmt->bindParam(':dag', $dag);
         $stmt->bindParam(':tijd', $tijd);
         $stmt->bindParam(':verdieping', $verdieping);
-        $stmt->bindParam(':locatie', $locatie);  // Locatie binden
+        $stmt->bindParam(':locatie', $locatie);
         $stmt->bindParam(':naam', $naam);
         $stmt->bindParam(':email', $email);
 
         // Voer de query uit
         $stmt->execute();
 
-        echo "<div class='confirmation'>
+        // MQTT-bericht sturen
+        $topic = "parkeerplaats/reserveringen";
+        $bericht = json_encode([
+            "dag" => $dag,
+            "tijd" => $tijd,
+            "verdieping" => $verdieping,
+            "locatie" => $locatie,
+            "naam" => $naam,
+            "email" => $email
+        ]);
+        stuurMqttBericht($topic, $bericht);
+
+        // Bevestiging voor de gebruiker
+        $confirmationMessage = "
+            <div class='confirmation'>
                 <h3>Bevestiging:</h3>
                 <p>Dag: $dag</p>
                 <p>Tijd: $tijd</p>
                 <p>Verdieping: $verdieping</p>
-                <p>Locatie: $locatie</p>  <!-- Locatie tonen -->
+                <p>Locatie: $locatie</p>
                 <p>Naam: $naam</p>
                 <p>Email: $email</p>
                 <p>Uw reservering is succesvol opgeslagen!</p>
-              </div>";
+            </div>";
     } catch(PDOException $e) {
-        echo "Fout bij invoeren van gegevens: " . $e->getMessage();
+        $errorMessage = "Fout bij invoeren van gegevens: " . $e->getMessage();
     }
 }
 ?>
@@ -76,7 +87,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <section id="reserveren">
     <div class="card">
         <h2>Reserveer een Parkeerplaats</h2>
-        <form action="index.php" method="POST">
+
+        <?php 
+        // Toon bevestiging of foutmelding na formulierverwerking
+        if (isset($confirmationMessage)) {
+            echo $confirmationMessage;
+        } elseif (isset($errorMessage)) {
+            echo "<div class='error'>$errorMessage</div>";
+        }
+        ?>
+
+        <form action="home.php" method="POST">
             <label for="dag">Selecteer een Dag:</label>
             <input type="date" id="dag" name="dag" required><br><br>
 
@@ -85,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="select-container">
                 <div class="select-field">
-                    <label for="verdieping">Selecteer Verdiening:</label>
+                    <label for="verdieping">Selecteer Verdieping:</label>
                     <select id="verdieping" name="verdieping" required>
                         <option value="verdieping1">Verdieping 1</option>
                         <option value="verdieping2">Verdieping 2</option>
