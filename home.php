@@ -1,7 +1,7 @@
 <?php
 // Inclusie van db.php en mqtt.php voor database- en MQTT-verbindingen
-//  include 'db.php';
-//  include 'mqtt.php';
+include 'db.php';
+include 'mqtt.php';
 
 // Verwerk het formulier als het is ingediend
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // SQL-insert-query
         $sql = "INSERT INTO reserveringen (dag, tijd, verdieping, locatie, naam, email) 
                 VALUES (:dag, :tijd, :verdieping, :locatie, :naam, :email)";
-        
+
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':dag', $dag);
         $stmt->bindParam(':tijd', $tijd);
@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p>Email: $email</p>
                 <p>Uw reservering is succesvol opgeslagen!</p>
             </div>";
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         $errorMessage = "Fout bij invoeren van gegevens: " . $e->getMessage();
     }
 }
@@ -57,74 +57,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parkeerplaats Reserveren</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- Header met Logo en Menu -->
-<header>
-    <div class="logo">
-        <H1>FastParking</H1>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#reserveren">Reserveren</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-</header>
+    <!-- Header met Logo en Menu -->
+    <header>
+        <div class="logo">
+            <H1>FastParking</H1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#reserveren">Reserveren</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<!-- Formulier voor Parkeerplaats Reserveren -->
-<section id="reserveren">
-    <div class="card">
-        <h2>Reserveer een Parkeerplaats</h2>
+    <!-- Formulier voor Parkeerplaats Reserveren -->
+    <section id="reserveren">
+        <div class="card">
+            <h2>Reserveer een Parkeerplaats</h2>
 
-        <?php 
-        // Toon bevestiging of foutmelding na formulierverwerking
-        if (isset($confirmationMessage)) {
-            echo $confirmationMessage;
-        } elseif (isset($errorMessage)) {
-            echo "<div class='error'>$errorMessage</div>";
-        }
-        ?>
+            <?php
+            // Toon bevestiging of foutmelding na formulierverwerking
+            if (isset($confirmationMessage)) {
+                echo $confirmationMessage;
+            } elseif (isset($errorMessage)) {
+                echo "<div class='error'>$errorMessage</div>";
+            }
+            ?>
 
-        <form action="home.php" method="POST">
-            <label for="dag">Selecteer een Dag:</label>
-            <input type="date" id="dag" name="dag" required><br><br>
+            <form action="home.php" method="POST">
+                <label for="dag">Selecteer een Dag:</label>
+                <input type="date" id="dag" name="dag" required><br><br>
 
-            <label for="tijd">Selecteer een Tijd (24-uur formaat):</label>
-            <input type="time" id="tijd" name="tijd" required><br><br>
+                <label for="tijd">Selecteer een Tijd (24-uur formaat):</label>
+                <input type="time" id="tijd" name="tijd" required><br><br>
 
-            <div class="select-container">
-                <div class="select-field">
-                    <label for="locatie">Selecteer Locatie:</label>
-                    <select id="locatie" name="locatie" required>
-                        <option value="locatieA">Locatie Eindhoven</option>
-                        <option value="locatieB">Locatie Tilburg</option>
-                    </select>
+                <div class="select-container">
+                    <div class="select-field">
+                        <label for="locatie">Selecteer Locatie:</label>
+                        <select id="locatie" name="locatie" required>
+                            <option value="locatieA">Locatie Eindhoven</option>
+                            <option value="locatieB">Locatie Tilburg</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <label for="naam">Naam:</label>
-            <input type="text" id="naam" name="naam" required><br><br>
+                <br><br><label for="naam">Voornaam:</label>
+                <input type="text" id="naam" name="Voornaam" required>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
+                <label for="naam">Achternaam:</label>
+                <input type="text" id="naam" name="Achternaam" required><br><br>
 
-            <button type="submit">Reserveren</button>
-        </form>
-    </div>
-</section>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required><br><br>
 
-<!-- Footer -->
-<footer>
-    <p>&copy; 2024 Parkeerplaats Reserveren. Alle rechten voorbehouden.</p>
-</footer>
+                <button type="submit">Reserveren</button>
+            </form>
+
+            <!-- test form -->
+            <form action="mqtt_send.php" method="post">
+                <label for="message">Bericht:</label>
+                <input type="text" id="message" name="message" required>
+                <button type="submit">Verstuur naar MQTT</button>
+            </form>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Parkeerplaats Reserveren. Alle rechten voorbehouden.</p>
+    </footer>
 
 </body>
+
 </html>

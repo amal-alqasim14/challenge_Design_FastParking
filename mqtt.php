@@ -1,23 +1,42 @@
 <?php
-require 'phpMQTT.php';  // Verwijs naar de juiste locatie van phpMQTT
+require 'vendor/bluerhinos/phpmqtt/phpMQTT.php'; 
+require 'vendor/autoload.php';
+
+// Nu kun je de phpMQTT klasse gebruiken
+use Bluerhinos\phpMQTT;
 
 // MQTT configuratie-instellingen
-$host = 'mqtt-broker-adres';  // Voeg hier je MQTT broker adres in
-$port = 1883;  // Voeg hier de poort in, bijv. 1883 voor niet-beveiligde verbinding
-$clientId = 'php_mqtt_client';  // Voeg hier een client-ID in
-$username = 'mqtt_user';  // Voeg hier de gebruikersnaam in
-$password = 'mqtt_password';  // Voeg hier het wachtwoord in
+$host = '192.168.123.132';  // Voeg hier je MQTT broker adres in
+$port = 1883;  
+$clientId = 'client_' . uniqid();  // Voeg hier een unieke client-ID in
+$username = 'mqtt_user';  
+$password = 'Welkom123!';  
 
 // Functie om een bericht naar de MQTT-broker te sturen
 function stuurMqttBericht($topic, $bericht) {
     global $host, $port, $clientId, $username, $password;
-    $mqtt = new phpMQTT($host, $port, $clientId);
 
-    if ($mqtt->connect(true, NULL, $username, $password)) {
-        $mqtt->publish($topic, $bericht, 0);
-        $mqtt->close();
-    } else {
-        error_log("MQTT-verbinding mislukt.");
+    try {
+        // Maak verbinding met de MQTT broker
+        $mqtt = new phpMQTT($host, $port, $clientId);
+        
+        // Probeer verbinding te maken met de broker
+        if ($mqtt->connect(true, NULL, $username, $password)) {
+            // Als de verbinding succesvol is, publiceer het bericht
+            $mqtt->publish($topic, $bericht, 0);
+            $mqtt->close();  // Sluit de verbinding
+            echo "Verbonden met MQTT en bericht verzonden!";
+        } else {
+            // Als de verbinding niet lukt, gooi een uitzondering
+            throw new Exception("MQTT-verbinding mislukt.");
+        }
+    } catch (Exception $e) {
+        // Als er een fout optreedt, log de foutmelding
+        error_log("Fout bij verbinden met MQTT: " . $e->getMessage());
+        echo "Er is een fout opgetreden: " . $e->getMessage();
     }
 }
+
+// Voorbeeld van het versturen van een bericht
+stuurMqttBericht("test/topic", "Hallo van MQTT!");
 ?>
