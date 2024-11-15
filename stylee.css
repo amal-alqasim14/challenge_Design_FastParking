@@ -1,0 +1,216 @@
+/* Algemene stijlen */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: black;
+    color: white;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+header .logo {
+    display: flex; /* Gebruik Flexbox voor de logo-sectie */
+    align-items: center; /* Verticale uitlijning */
+}
+
+header .logo img {
+    max-width: 100px; /* Beperk de breedte van het logo */
+    margin-right: 10px; /* Ruimte tussen logo en tekst */
+}
+
+header .logo h1 {
+    margin: 0; /* Verwijder extra ruimte rond de tekst */
+    font-size: 24px; /* Pas de lettergrootte aan indien nodig */
+    color: white; /* Zorg dat de tekst wit blijft zoals in de huidige stijl */
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+header nav ul li {
+    margin: 0 15px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Homepage */
+.homepage {
+    position: relative;
+    height: 100vh; /* Volledige hoogte van het scherm */
+    background-image: url('achtergrondfoto.jpg'); 
+    /* Vervang 'achtergrondfoto.jpg' door de naam van je afbeelding */
+    background-size: cover; /* Zorg dat de afbeelding het volledige scherm bedekt */
+    background-position: center; /* Centreer de afbeelding */
+    display: flex; /* Gebruik Flexbox om inhoud te centreren */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Achtergrondkleur achter de knoppen (optioneel voor betere zichtbaarheid) */
+.buttons {
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparante zwarte achtergrond */
+    padding: 20px; /* Ruimte rond de knoppen */
+    border-radius: 10px; /* Maak de hoeken afgerond */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Voeg schaduw toe */
+}
+
+/* Knoppen stijl */
+.button {
+    display: inline-block;
+    background-color: black; /* Groene kleur voor knoppen */
+    color: white;
+    padding: 15px 30px;
+    margin: 10px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #1580d2; /* Donkergroen bij hover */
+}
+
+/* reserveringpage */
+.card {
+    background-color: white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 60%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.card h2 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin: 5px;
+}
+
+form input, form select, form button {
+    padding: 10px;
+    margin: 10px -10px;
+    font-size: 1em;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+form button {
+    background-color: #676fcb;
+    color: white;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #555;
+}
+
+
+.select-container {
+    display: flex;
+    gap: 20px; /* Ruimte tussen de velden */
+    flex-wrap: wrap; 
+}
+
+.select-field {
+    flex: 1; 
+    min-width: 200px; 
+}
+
+/* Footer */
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    /* position: fixed;  */
+    bottom: 0;
+    width: 100%;
+}
+.homepage_footer{
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed; 
+    bottom: 0;
+    width: 100%;
+}
+
+
+
+
+/* Zorg ervoor dat de velden onder elkaar komen op kleinere schermen */
+@media (max-width: 768px) {
+    .select-container {
+        flex-direction: column; 
+    }
+
+    .select-field {
+        flex: none; 
+    }
+}
+
+/* Achtergrond voor de homepage */
+/* Achtergrond voor de homepage */
+.homepage {
+    position: relative;
+    height: 100vh; /* Volledige hoogte van het scherm */
+    background-image: url('achtergrondfoto.jpg'); /* Vervang 'achtergrondfoto.jpg' door de naam van je afbeelding */
+    background-size: cover; /* Zorg dat de afbeelding het volledige scherm bedekt */
+    background-position: center; /* Centreer de afbeelding */
+    display: flex; /* Gebruik Flexbox om inhoud te centreren */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Achtergrondkleur achter de knoppen (optioneel voor betere zichtbaarheid) */
+.buttons {
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparante zwarte achtergrond */
+    padding: 20px; /* Ruimte rond de knoppen */
+    border-radius: 10px; /* Maak de hoeken afgerond */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Voeg schaduw toe */
+}
+
+/* Knoppen stijl */
+.button {
+    display: inline-block;
+    background-color: #676fcb; /* Groene kleur voor knoppen */
+    color: white;
+    padding: 15px 30px;
+    margin: 10px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #8c91cb; /* Donkergroen bij hover */
+}
+
