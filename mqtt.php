@@ -12,7 +12,7 @@ $clientId = 'client_' . uniqid();  // Voeg hier een unieke client-ID in
 $username = 'mqtt_user';  
 $password = 'Welkom123!';  
 
-// Functie om een bericht naar de MQTT-broker te sturen
+
 function stuurMqttBericht($topic, $bericht) {
     global $host, $port, $clientId, $username, $password;
 
@@ -38,5 +38,5 @@ function stuurMqttBericht($topic, $bericht) {
 }
 
 // Voorbeeld van het versturen van een bericht
-stuurMqttBericht("test/topic", "Hallo van MQTT!");
+// stuurMqttBericht("test/topic", "Hallo van MQTT!");
 ?>

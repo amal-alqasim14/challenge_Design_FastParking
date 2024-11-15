@@ -13,7 +13,6 @@ try {
     $mysqli = new mysqli($DB_HOST, $DB_USERNAME, $DB_PASSWORD, $DB_NAME);
 
     // Als je hier komt, is de verbinding succesvol
-
     echo "Verbonden met de database!";
     
     // Indien de verbinding succesvol is, kun je verdergaan met je code
