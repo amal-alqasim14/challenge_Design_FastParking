@@ -9,51 +9,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dag = $_POST['dag'];
     $tijd = $_POST['tijd'];
     $locatie = $_POST['locatie'];
-    $naam = $_POST['naam'];
+    $voornaam = $_POST['voornaam'];
+    $achternaam = $_POST['achternaam'];
     $email = $_POST['email'];
 
     try {
         // SQL-insert-query
-        $sql = "INSERT INTO reserveringen (dag, tijd, verdieping, locatie, naam, email) 
-                VALUES (:dag, :tijd, :verdieping, :locatie, :naam, :email)";
+        $sql = "INSERT INTO Reserveringen (locatie, dag, tijd, voornaam, achternaam, email) 
+                VALUES (:locatie, :dag, :tijd, :voornaam, :achternaam, :email)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':dag', $dag);
         $stmt->bindParam(':tijd', $tijd);
         $stmt->bindParam(':locatie', $locatie);
-        $stmt->bindParam(':naam', $naam);
+        $stmt->bindParam(':voornaam', $voornaam);
+        $stmt->bindParam(':achternaam', $achternaam);
         $stmt->bindParam(':email', $email);
 
-        // Voer de query uit
+        // Voer de insert-query uit
         $stmt->execute();
 
-        // MQTT-bericht sturen
-        $topic = "parkeerplaats/reserveringen";
-        $bericht = json_encode([
-            "dag" => $dag,
-            "tijd" => $tijd,
-            "locatie" => $locatie,
-            "naam" => $naam,
-            "email" => $email
-        ]);
-        stuurMqttBericht($topic, $bericht);
+        // Selecteer de reservering_id van de zojuist toegevoegde reservering
+        $sql = "SELECT reservering_id FROM Reserveringen 
+                WHERE locatie = :locatie AND dag = :dag AND tijd = :tijd 
+                  AND voornaam = :voornaam AND achternaam = :achternaam AND email = :email
+                ORDER BY reservering_id DESC LIMIT 1";
 
-        // Bevestiging voor de gebruiker
-        $confirmationMessage = "
-            <div class='confirmation'>
-                <h3>Bevestiging:</h3>
-                <p>Dag: $dag</p>
-                <p>Tijd: $tijd</p>
-                <p>Locatie: $locatie</p>
-                <p>Naam: $naam</p>
-                <p>Email: $email</p>
-                <p>Uw reservering is succesvol opgeslagen!</p>
-            </div>";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':locatie', $locatie);
+        $stmt->bindParam(':dag', $dag);
+        $stmt->bindParam(':tijd', $tijd);
+        $stmt->bindParam(':voornaam', $voornaam);
+        $stmt->bindParam(':achternaam', $achternaam);
+        $stmt->bindParam(':email', $email);
+
+        // Voer de select-query uit
+        $stmt->execute();
+
+        // Haal het reservering_id op uit de resultaten
+        $reservering_id = $stmt->fetchColumn();
+
+        if ($reservering_id) {
+            echo "Reservering succesvol! ID: " . $reservering_id;
+        } else {
+            echo "Reservering niet gevonden.";
+        }
+
     } catch (PDOException $e) {
         $errorMessage = "Fout bij invoeren van gegevens: " . $e->getMessage();
+        echo $errorMessage;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="nl">
@@ -86,16 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="card">
             <h2>Reserveer een Parkeerplaats</h2>
 
-            <?php
-            // Toon bevestiging of foutmelding na formulierverwerking
-            if (isset($confirmationMessage)) {
-                echo $confirmationMessage;
-            } elseif (isset($errorMessage)) {
-                echo "<div class='error'>$errorMessage</div>";
-            }
-            ?>
-
-            <form action="home.php" method="POST">
+            <form action="mqtt_send.php" method="POST">
                 <label for="dag">Selecteer een Dag:</label>
                 <input type="date" id="dag" name="dag" required><br><br>
 
@@ -106,17 +105,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="select-field">
                         <label for="locatie">Selecteer Locatie:</label>
                         <select id="locatie" name="locatie" required>
-                            <option value="locatieA">Locatie Eindhoven</option>
-                            <option value="locatieB">Locatie Tilburg</option>
+                            <option value="EIN"> Eindhoven</option>
+                            <option value="TIL"> Tilburg</option>
                         </select>
                     </div>
                 </div>
 
                 <br><br><label for="naam">Voornaam:</label>
-                <input type="text" id="naam" name="Voornaam" required>
+                <input type="text" id="voornaam" name="voornaam" required>
 
                 <label for="naam">Achternaam:</label>
-                <input type="text" id="naam" name="Achternaam" required><br><br>
+                <input type="text" id="naam" name="achternaam" required><br><br>
 
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required><br><br>
@@ -124,12 +123,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="submit">Reserveren</button>
             </form>
 
-            <!-- test form -->
-            <form action="mqtt_send.php" method="post">
-                <label for="message">Bericht:</label>
-                <input type="text" id="message" name="message" required>
-                <button type="submit">Verstuur naar MQTT</button>
-            </form>
         </div>
     </section>
 
